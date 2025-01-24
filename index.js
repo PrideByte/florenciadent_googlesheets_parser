@@ -20,7 +20,7 @@ async function main() {
     var parser = setInterval(async () => {
         try {
             rowsToParse.push(...await accessSpreadsheet());
-            console.log('Got new data from Google Sheets:');
+            console.log('Got new data from Google Sheets!');
             console.dir(rowsToParse);
         } catch (error) {
             console.error('Error in Google Sheets call:\n' + error);
@@ -65,6 +65,8 @@ async function main() {
             if (!success) {
                 rowsToParse.unshift(row);
             }
+        } else {
+            console.warn('No new data to send to calltouch and site!');
         }
     }, 1000 * sendDataTimeout);
 }

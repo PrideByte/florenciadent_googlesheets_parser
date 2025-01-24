@@ -35,7 +35,8 @@ export async function accessSpreadsheet() {
                 row.get('UTM-Источник'),
                 row.get('UTM-Канал'),
                 row.get('UTM-Кампания'),
-                row.get('UTM-Запрос')
+                row.get('UTM-Запрос'),
+                new Date()
             ]);
         });
 
