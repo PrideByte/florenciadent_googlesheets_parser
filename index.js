@@ -70,8 +70,8 @@ async function main() {
                 }
             }
 
-            if (((process.env.SEND_TO_SITE == 1) && (!row.sendedToCalltouch))
-                || ((process.env.SEND_TO_CALLTOUCH == 1) && (!row.sendedToSite))) {
+            if (((process.env.SEND_TO_CALLTOUCH == 1) && (!row.sendedToCalltouch))
+                || ((process.env.SEND_TO_SITE == 1) && (!row.sendedToSite))) {
                 console.log('Return row into the stack!');
                 rowsToParse.unshift(row);
             }
