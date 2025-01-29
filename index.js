@@ -30,7 +30,7 @@ async function main() {
     var sender = setInterval(async () => {
         if (rowsToParse.length) {
             const row = rowsToParse.shift();
-            const success = true;
+            let success = true;
 
             try {
                 await sendDataToSiteForm(row[1].replace(/^8/, '+7'));
