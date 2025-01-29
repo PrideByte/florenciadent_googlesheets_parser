@@ -33,7 +33,7 @@ async function main() {
             const row = rowsToParse.shift();
             const { data } = row;
 
-            if (!row.sendedToSite) {
+            if (Boolean(process.env.SEND_TO_SITE) && (!row.sendedToSite)) {
                 try {
                     await sendDataToSiteForm(data[1].replace(/^8/, '+7'));
 
@@ -45,7 +45,7 @@ async function main() {
                 }
             }
             
-            if (!row.sendedToCalltouch) {
+            if (Boolean(process.env.SEND_TO_CALLTOUCH) && (!row.sendedToCalltouch)) {
                 try {
                     await makeCalltouchRequestImport({
                         reqNumber: Date.now(),
@@ -73,6 +73,7 @@ async function main() {
             }
 
             if ((!row.sendedToCalltouch) || (!row.sendedToSite)) {
+                console.log('Return row into the stack!');
                 rowsToParse.unshift(row);
             }
         } else {
