@@ -2,4 +2,6 @@
 /old_functions/
 .MOS.ENV
 .SPB.ENV
+.DENMOS.ENV
+.DENSPB.ENV
 credentials.json
