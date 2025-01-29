@@ -61,8 +61,6 @@ async function main() {
                     });
 
                     console.log('Successfully sended data to calltouch');
-                    console.log('Data left to send:');
-                    console.dir(rowsToParse);
                     row.sendedToCalltouch = true;
                 } catch (error) {
                     success = false;
@@ -72,10 +70,14 @@ async function main() {
                 }
             }
 
-            if ((!row.sendedToCalltouch) || (!row.sendedToSite)) {
+            if (((process.env.SEND_TO_SITE == 1) && (!row.sendedToCalltouch))
+                || ((process.env.SEND_TO_CALLTOUCH == 1) && (!row.sendedToSite))) {
                 console.log('Return row into the stack!');
                 rowsToParse.unshift(row);
             }
+
+            console.log('Data left to send:');
+            console.dir(rowsToParse);
         } else {
             console.warn('No new data to send to calltouch and site!');
         }
