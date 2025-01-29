@@ -17,7 +17,7 @@ async function main() {
         console.error('Error in first Google Sheets call:\n' + error);
     }
 
-    var parser = setInterval(async () => {
+   var parser = setInterval(async () => {
         try {
             rowsToParse.push(...await accessSpreadsheet());
             console.log('Got new data from Google Sheets!');
@@ -33,7 +33,7 @@ async function main() {
             const row = rowsToParse.shift();
             const { data } = row;
 
-            if (Boolean(process.env.SEND_TO_SITE) && (!row.sendedToSite)) {
+            if ((process.env.SEND_TO_SITE == 1) && (!row.sendedToSite)) {
                 try {
                     await sendDataToSiteForm(data[1].replace(/^8/, '+7'));
 
@@ -45,7 +45,7 @@ async function main() {
                 }
             }
             
-            if (Boolean(process.env.SEND_TO_CALLTOUCH) && (!row.sendedToCalltouch)) {
+            if ((process.env.SEND_TO_CALLTOUCH == 1) && (!row.sendedToCalltouch)) {
                 try {
                     await makeCalltouchRequestImport({
                         reqNumber: Date.now(),
