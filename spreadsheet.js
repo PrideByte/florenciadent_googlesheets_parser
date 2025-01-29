@@ -40,7 +40,8 @@ export async function accessSpreadsheet() {
                     new Date()
                 ],
                 sendedToSite: false,
-                sendedToCalltouch: false
+                sendedToCalltouch: false,
+                sendedToEmail: false
             });
         });
 

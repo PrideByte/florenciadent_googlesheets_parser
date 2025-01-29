@@ -1,5 +1,5 @@
 import { accessSpreadsheet } from './spreadsheet.js';
-import { sendDataToSiteForm, makeCalltouchRequestImport } from './integrations.js';
+import { sendDataToSiteForm, makeCalltouchRequestImport, sendMailTo } from './integrations.js';
 
 // Таймаут до получения новых данных из гугл-таблиц (в секундах)
 const googleSheetsParseTimeout = 180;
@@ -70,16 +70,38 @@ async function main() {
                 }
             }
 
+            if ((process.env.SEND_TO_EMAIL == 1) && (!row.sendedToEmail)) {
+                try {
+                    await sendMailTo({
+                        reqURL: process.env.SITE_URL,
+                        name: data[0],
+                        phone: data[1],
+                        email: data[2],
+                        utmsource: data[3],
+                        utmchannel: data[4],
+                        utmcampaign: data[5],
+                        utmterm: data[6]
+                    });
+
+                    console.log('Successfully sended email');
+                    row.sendedToEmail = true;
+                } catch (error) {
+                    console.error('Error occurred when sending email:\n');
+                    console.log(error);
+                }
+            }
+
             if (((process.env.SEND_TO_CALLTOUCH == 1) && (!row.sendedToCalltouch))
-                || ((process.env.SEND_TO_SITE == 1) && (!row.sendedToSite))) {
-                console.log('Return row into the stack!');
+                || ((process.env.SEND_TO_SITE == 1) && (!row.sendedToSite))
+                || ((process.env.SEND_TO_EMAIL == 1) && (!row.sendedToEmail))) {
+                console.log('One of the actions did not complete. Return row into the queue!');
                 rowsToParse.unshift(row);
             }
 
             console.log('Data left to send:');
             console.dir(rowsToParse);
         } else {
-            console.warn('No new data to send to calltouch and site!');
+            console.log('No new data to send to calltouch and site!');
         }
     }, 1000 * sendDataTimeout);
 }

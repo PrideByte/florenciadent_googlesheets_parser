@@ -1,3 +1,5 @@
+import nodemailer from 'nodemailer';
+
 export async function sendDataToSiteForm(phoneNumber) {
     return new Promise(async (resolve, reject) => {
         const emailBody = {
@@ -93,3 +95,50 @@ export async function makeCalltouchRequestImport(data) {
         }
     });
 }
+
+export async function sendMailTo(data) {
+    return new Promise(async (resolve, reject) => {
+        const transporter = nodemailer.createTransport({
+            host: process.env.EMAIL_HOST,
+            port: +process.env.EMAIL_PORT,
+            secure: true,
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
+            tls: {
+                rejectUnauthorized: false
+            }
+        });
+
+        try {
+            const result = await transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: process.env.EMAIL_TO,
+                subject: 'New data from Google Sheets parser',
+                text: `Новые данные из Google Sheets.
+                    Сайт: ${data.reqURL},\n
+                    Телефон: ${data.phone},\n
+                    email: ${data.email},\n
+                    ФИО: ${data.name},\n
+                    utm-источник: ${data.utmsource},\n
+                    utm-канал: ${data.utmchannel},\n
+                    utm-кампания: ${data.utmcampaign},\n
+                    utm-запрос: ${data.utmterm}`,
+                html: `Новые данные из Google Sheets.
+                Сайт: ${data.reqURL},<br>
+                Телефон: ${data.phone},<br>
+                email: ${data.email},<br>
+                ФИО: ${data.name},<br>
+                utm-источник: ${data.utmsource},<br>
+                utm-канал: ${data.utmchannel},<br>
+                utm-кампания: ${data.utmcampaign},<br>
+                utm-запрос: ${data.utmterm}`
+            });
+
+            resolve(result);
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
