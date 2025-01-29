@@ -27,15 +27,12 @@ export async function sendDataToSiteForm(phoneNumber) {
                 body: form,
             });
 
-            console.log(response);
             if (response.status === 200) {
-                resolve();
+                resolve(response);
             } else {
-                console.error(response);
                 reject(response);
             }
         } catch (err) {
-            console.error(err);
             reject(err);
         }
     });
@@ -86,15 +83,12 @@ export async function makeCalltouchRequestImport(data) {
                 body: formData,
             });
 
-            console.log(response);
             if (response.status === 200) {
-                resolve();
+                resolve(response);
             } else {
-                console.error(response);
                 reject(response);
             }
         } catch (err) {
-            console.error(err);
             reject(err);
         }
     });

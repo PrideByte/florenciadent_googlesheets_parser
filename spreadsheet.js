@@ -27,21 +27,30 @@ export async function accessSpreadsheet() {
         }
 
         rows.forEach(async row => {
-            rowsToParse.push([
-                row.get('Имя клиента'),
-                row.get('Телефон').replace(/\D/g, '')
-                                  .replace(/(^\d)(\d{3})(\d{3})(\d{2})(\d{2})/, (p1, p2, p3, p4, p5, p6) => `8 (${p3 ?? ''}) ${p4 ?? ''}-${p5 ?? ''}-${p6 ?? ''}`),
-                row.get('Email'),
-                row.get('UTM-Источник'),
-                row.get('UTM-Канал'),
-                row.get('UTM-Кампания'),
-                row.get('UTM-Запрос'),
-                new Date()
-            ]);
+            rowsToParse.push({
+                data: [
+                    row.get('Имя клиента') ?? 'No name provided',
+                    row.get('Телефон')?.replace(/\D/g, '')
+                                    .replace(/(^\d)(\d{3})(\d{3})(\d{2})(\d{2})/, (p1, p2, p3, p4, p5, p6) => `8 (${p3 ?? ''}) ${p4 ?? ''}-${p5 ?? ''}-${p6 ?? ''}`),
+                    row.get('Email') ?? '',
+                    row.get('UTM-Источник') ?? '',
+                    row.get('UTM-Канал') ?? '',
+                    row.get('UTM-Кампания') ?? '',
+                    row.get('UTM-Запрос') ?? '',
+                    new Date()
+                ],
+                sendedToSite: false,
+                sendedToCalltouch: false
+            });
         });
 
         await mainSheet.clearRows();
-        await parsedSheet.addRows(rowsToParse);
+        await parsedSheet.addRows(
+            rowsToParse.reduce((acc, el) => {
+                acc.push(el.data);
+                return acc;
+            }, [])
+        );
 
         resolve(rowsToParse);
     });

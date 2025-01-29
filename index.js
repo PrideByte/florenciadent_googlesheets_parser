@@ -21,6 +21,7 @@ async function main() {
         try {
             rowsToParse.push(...await accessSpreadsheet());
             console.log('Got new data from Google Sheets!');
+            console.log('Data left to send:');
             console.dir(rowsToParse);
         } catch (error) {
             console.error('Error in Google Sheets call:\n' + error);
@@ -30,39 +31,48 @@ async function main() {
     var sender = setInterval(async () => {
         if (rowsToParse.length) {
             const row = rowsToParse.shift();
-            let success = true;
+            const { data } = row;
 
-            try {
-                await sendDataToSiteForm(row[1].replace(/^8/, '+7'));
+            if (!row.sendedToSite) {
+                try {
+                    await sendDataToSiteForm(data[1].replace(/^8/, '+7'));
 
-                console.log('Successfully sended email to site');
-            } catch (error) {
-                console.error('Error occurred when sending email to site:\n' + error);
+                    console.log('Successfully sended email to site');
+                    row.sendedToSite = true;
+                } catch (error) {
+                    console.error('Error occurred when sending email to site:\n');
+                    console.log(error);
+                }
             }
             
-            try {
-                await makeCalltouchRequestImport({
-                    reqNumber: Date.now(),
-                    subject: process.env.APP_NAME,
-                    reqURL: process.env.SITE_URL,
-                    name: row[0],
-                    phone: row[1],
-                    email: row[2],
-                    utmsource: row[3],
-                    utmchannel: row[4],
-                    utmcampaign: row[5],
-                    utmterm: row[6]
-                });
+            if (!row.sendedToCalltouch) {
+                try {
+                    await makeCalltouchRequestImport({
+                        reqNumber: Date.now(),
+                        subject: process.env.APP_NAME,
+                        reqURL: process.env.SITE_URL,
+                        name: data[0],
+                        phone: data[1],
+                        email: data[2],
+                        utmsource: data[3],
+                        utmchannel: data[4],
+                        utmcampaign: data[5],
+                        utmterm: data[6]
+                    });
 
-                console.log('Successfully sended data to calltouch');
-                console.log('Data to send left:');
-                console.dir(rowsToParse);
-            } catch (error) {
-                success = false;
-                console.error('Error occurred when sending data to calltouch:\n' + error);
+                    console.log('Successfully sended data to calltouch');
+                    console.log('Data left to send:');
+                    console.dir(rowsToParse);
+                    row.sendedToCalltouch = true;
+                } catch (error) {
+                    success = false;
+                    console.error('Error occurred when sending data to calltouch:\n');
+                    console.log(error);
+                    console.log(await error.json());
+                }
             }
 
-            if (!success) {
+            if ((!row.sendedToCalltouch) || (!row.sendedToSite)) {
                 rowsToParse.unshift(row);
             }
         } else {
