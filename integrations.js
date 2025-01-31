@@ -115,7 +115,7 @@ export async function sendMailTo(data) {
             const result = await transporter.sendMail({
                 from: process.env.EMAIL_USER,
                 to: process.env.EMAIL_TO,
-                subject: 'New data from Google Sheets parser',
+                subject: 'Новые данные из Google Sheets.',
                 text: `Новые данные из Google Sheets.
                     Сайт: ${data.reqURL},\n
                     Телефон: ${data.phone},\n

@@ -21,7 +21,7 @@ export async function accessSpreadsheet() {
         const rows = await mainSheet.getRows({ offset: 0 });
 
         if (!rows.length) {
-            console.warn('No new rows to parse!');
+            console.warn(`${new Date()}: No new rows to parse!`);
             resolve([]);
             return;
         }
