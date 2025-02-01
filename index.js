@@ -65,7 +65,6 @@ async function main() {
                     console.log(`${new Date()}: Data to Calltouch were successfully sent`);
                     row.sendedToCalltouch = true;
                 } catch (error) {
-                    success = false;
                     console.error(`${new Date()}: Error occurred when sending data to calltouch:\n`);
                     console.log(error);
                     console.log(await error.json());
