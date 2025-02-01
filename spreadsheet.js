@@ -29,14 +29,14 @@ export async function accessSpreadsheet() {
         rows.forEach(async row => {
             rowsToParse.push({
                 data: [
-                    row.get('Имя клиента') ?? 'No name provided',
                     row.get('Телефон')?.replace(/\D/g, '')
-                                    .replace(/(^\d)(\d{3})(\d{3})(\d{2})(\d{2})/, (p1, p2, p3, p4, p5, p6) => `8 (${p3 ?? ''}) ${p4 ?? ''}-${p5 ?? ''}-${p6 ?? ''}`),
-                    row.get('Email') ?? '',
-                    row.get('UTM-Источник') ?? '',
-                    row.get('UTM-Канал') ?? '',
-                    row.get('UTM-Кампания') ?? '',
-                    row.get('UTM-Запрос') ?? '',
+                                        .replace(/(^\d)(\d{3})(\d{3})(\d{2})(\d{2})/, (p1, p2, p3, p4, p5, p6) => `8 (${p3 ?? ''}) ${p4 ?? ''}-${p5 ?? ''}-${p6 ?? ''}`),
+                    row.get('Имя клиента') ?? undefined,
+                    row.get('Email') ?? undefined,
+                    row.get('UTM-Источник') ?? process.env.UTM_SOURCE,
+                    row.get('UTM-Канал') ?? process.env.UTM_CHANNEL,
+                    row.get('UTM-Кампания') ?? process.env.UTM_CAMPAING,
+                    row.get('UTM-Запрос') ?? process.env.UTM_TERM,
                     new Date()
                 ],
                 sendedToSite: false,

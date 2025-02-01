@@ -4,7 +4,7 @@ import { sendDataToSiteForm, makeCalltouchRequestImport, sendMailTo } from './in
 // Таймаут до получения новых данных из гугл-таблиц (в секундах)
 const googleSheetsParseTimeout = 60 * 10;
 // Таймаут до отправки данных поочередно (в секундах)
-const sendDataTimeout = 60;
+const sendDataTimeout = 60 * 3;
 
 async function main() {
     var rowsToParse = [];
@@ -53,8 +53,8 @@ async function main() {
                         reqNumber: Date.now(),
                         subject: process.env.APP_NAME,
                         reqURL: process.env.SITE_URL,
-                        name: data[0],
-                        phone: data[1],
+                        phone: data[0],
+                        name: data[1],
                         email: data[2],
                         utmsource: data[3],
                         utmchannel: data[4],
@@ -67,7 +67,6 @@ async function main() {
                 } catch (error) {
                     console.error(`${new Date()}: Error occurred when sending data to calltouch:\n`);
                     console.log(error);
-                    console.log(await error.json());
                 }
             }
 
@@ -75,8 +74,8 @@ async function main() {
                 try {
                     await sendMailTo({
                         reqURL: process.env.SITE_URL,
-                        name: data[0],
-                        phone: data[1],
+                        phone: data[0],
+                        name: data[1],
                         email: data[2],
                         utmsource: data[3],
                         utmchannel: data[4],
