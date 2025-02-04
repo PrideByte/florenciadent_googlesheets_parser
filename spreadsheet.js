@@ -27,6 +27,11 @@ export async function accessSpreadsheet() {
         }
 
         rows.forEach(async row => {
+            if (!row.get('Телефон') || row.get('Телефон').replace(/\D/g, '').length !== 11) {
+                console.warn(`Phone number ${row.get('Телефон').replace(/\D/g, '')} doesn't contain 11 numbers. Skipping row...`);
+                return;
+            }
+
             rowsToParse.push({
                 data: [
                     row.get('Телефон')?.replace(/\D/g, '')
