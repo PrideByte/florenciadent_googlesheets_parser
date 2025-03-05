@@ -35,14 +35,13 @@ export async function accessSpreadsheet() {
 
                 rowsToParse.push({
                     data: [
-                        row.get('Телефон')?.replace(/\D/g, '')
-                            .replace(/(^\d)(\d{3})(\d{3})(\d{2})(\d{2})/, (p1, p2, p3, p4, p5, p6) => `8 (${p3 ?? ''}) ${p4 ?? ''}-${p5 ?? ''}-${p6 ?? ''}`),
-                        row.get('Имя клиента') ?? undefined,
-                        row.get('Email') ?? undefined,
-                        row.get('UTM-Источник') ?? process.env.UTM_SOURCE,
-                        row.get('UTM-Канал') ?? process.env.UTM_CHANNEL,
-                        row.get('UTM-Кампания') ?? process.env.UTM_CAMPAING,
-                        row.get('UTM-Запрос') ?? process.env.UTM_TERM,
+                        (row.get('Телефон')?.trim().length ? modifyPhoneNumber(row.get('Телефон')) : '8 (000) 000-00-00'),
+                        (row.get('Имя клиента')?.trim().length ? row.get('Имя клиента')?.trim() : undefined),
+                        (row.get('Email')?.trim().length ? row.get('Email')?.trim() : undefined),
+                        row.get('UTM-Источник')?.trim() || process.env.UTM_SOURCE,
+                        row.get('UTM-Канал')?.trim() || process.env.UTM_CHANNEL,
+                        row.get('UTM-Кампания')?.trim() || process.env.UTM_CAMPAING,
+                        row.get('UTM-Запрос')?.trim() || process.env.UTM_TERM,
                         new Date()
                     ],
                     sendedToSite: false,
@@ -64,4 +63,9 @@ export async function accessSpreadsheet() {
             reject(error);
         }
     });
+}
+
+function modifyPhoneNumber(phoneNumber) {
+    return phoneNumber.replace(/\D/g, '')
+        .replace(/(^\d)(\d{3})(\d{3})(\d{2})(\d{2})/, (p1, p2, p3, p4, p5, p6) => `8 (${p3 ?? ''}) ${p4 ?? ''}-${p5 ?? ''}-${p6 ?? ''}`);
 }

@@ -1,5 +1,6 @@
 /node_modules/
 /old_functions/
+/logs/
 .MOS.ENV
 .SPB.ENV
 .DENMOS.ENV
